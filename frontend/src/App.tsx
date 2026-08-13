@@ -15,6 +15,8 @@ import SettingsPage from './pages/SettingsPage'
 import ShopPage from './pages/ShopPage'
 import LandingPage from './pages/LandingPage'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 export default function App() {
   const [page, setPage] = useState<Page>('learn')
   const [gameState, setGameState] = useState<GameState>(INITIAL_GAME_STATE)
@@ -32,16 +34,9 @@ export default function App() {
 
     try {
       const [userRes, courseRes] = await Promise.all([
-        fetch('http://localhost:8000/api/user/', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:8000/api/course/', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(`${API_URL}/api/user/`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/course/`, { headers: { 'Authorization': `Bearer ${token}` } })
       ])
-
-      if (!userRes.ok || !courseRes.ok) {
-        // Token might be invalid
-        localStorage.removeItem('token')
-        setToken(null)
-        return
-      }
 
       if (!userRes.ok || !courseRes.ok) {
         if (userRes.status === 401) {
@@ -76,7 +71,6 @@ export default function App() {
         rank: userData.rank
       }))
 
-      // Use backend course data directly
       let previousWasCompleted = true
       const mappedUnits = courseData.map((u: any) => ({
         ...u,
@@ -99,7 +93,6 @@ export default function App() {
     }
   }, [token])
 
-  // Fetch user data when token changes
   useEffect(() => {
     const fetchUserData = async () => {
       if (!token) {
@@ -121,7 +114,6 @@ export default function App() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Lesson flow
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null)
   const [showStartModal, setShowStartModal] = useState(false)
   const [inLesson, setInLesson] = useState(false)
@@ -166,7 +158,7 @@ export default function App() {
 
     if (token && skillId && typeof skillId === 'number') {
       try {
-        await fetch('http://localhost:8000/api/lessons/complete/', {
+        await fetch(`${API_URL}/api/lessons/complete/`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -179,10 +171,9 @@ export default function App() {
           })
         })
 
-        // Re-fetch state
         const [userRes, courseRes] = await Promise.all([
-          fetch('http://localhost:8000/api/user/', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:8000/api/course/', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch(`${API_URL}/api/user/`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API_URL}/api/course/`, { headers: { 'Authorization': `Bearer ${token}` } })
         ])
 
         if (!userRes.ok || !courseRes.ok) {
@@ -239,7 +230,6 @@ export default function App() {
         console.error("Failed to sync progress with backend", err)
       }
     } else {
-      // Fallback local logic if no backend token
       setGameState((prev) => ({
         ...prev,
         xp: prev.xp + xpEarned,
@@ -281,7 +271,6 @@ export default function App() {
       })
     }
 
-    // Toasts
     addToast(`+${xpEarned} XP`, '⭐')
     if (correctCount === total) {
       setTimeout(() => addToast('Perfect lesson!', '🎯'), 600)
@@ -295,27 +284,26 @@ export default function App() {
     setSelectedSkill(null)
     setGameState(prev => ({ ...prev, hearts: heartsLeft }))
 
-    if (token && skillId && typeof skillId === 'number') {
+    if (token && selectedSkill?.id && typeof selectedSkill.id === 'number') {
       try {
-        await fetch('http://localhost:8000/api/lessons/complete/', {
+        await fetch(`${API_URL}/api/lessons/complete/`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ 
-            skillId: skillId, 
+            skillId: selectedSkill.id, 
             xpEarned: 0, 
             heartsRemaining: heartsLeft 
           })
         })
       } catch (err) {
-        console.error("Failed to sync hearts with backend", err)
+        console.error("Failed to sync exit to backend", err)
       }
     }
   }
 
-  // Lesson player takes over full screen
   if (inLesson && selectedSkill) {
     return (
       <div className="fixed inset-0 z-50 bg-white dark:bg-[#131F24] overflow-y-auto">

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import type { GameState } from '../types'
 import { ACHIEVEMENTS } from '../data/seed'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 interface ProfilePageProps {
   gameState: GameState
   onNavigate?: (page: string) => void
@@ -14,7 +16,7 @@ export default function ProfilePage({ gameState, onNavigate, onLogout }: Profile
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      fetch('http://localhost:8000/api/user/feed/', {
+      fetch(`${API_URL}/api/user/feed/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.json())

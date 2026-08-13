@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import { GameState } from '../types';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 interface LeaderboardUser {
   id: number;
   rank: number;
@@ -25,7 +27,7 @@ export default function LeaderboardPage({ gameState, onFriendAction }: Leaderboa
   const fetchLeaderboard = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/leaderboard/', {
+      const res = await fetch(`${API_URL}/api/leaderboard/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -46,7 +48,7 @@ export default function LeaderboardPage({ gameState, onFriendAction }: Leaderboa
   const sendFriendRequest = async (userId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/friends/request/', {
+      const res = await fetch(`${API_URL}/api/friends/request/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +68,7 @@ export default function LeaderboardPage({ gameState, onFriendAction }: Leaderboa
   const acceptFriendRequest = async (userId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:8000/api/friends/accept/', {
+      const res = await fetch(`${API_URL}/api/friends/accept/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

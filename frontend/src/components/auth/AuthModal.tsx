@@ -30,9 +30,10 @@ export default function AuthModal({ mode, onClose, onSuccess }: AuthModalProps) 
     const body = mode === 'login' 
       ? { username, password } 
       : { username, password, email }
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     try {
-      const res = await fetch(`http://localhost:8000${endpoint}`, {
+      const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
