@@ -1,0 +1,1 @@
+import { INITIAL_UNITS } from './src/data/seed.ts'; import fs from 'fs'; fs.writeFileSync('seed_data.json', JSON.stringify(INITIAL_UNITS, null, 2));
