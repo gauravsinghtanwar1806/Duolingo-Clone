@@ -86,7 +86,7 @@ npm run dev
 The frontend will be available at `http://localhost:5173` and the backend at `http://localhost:8000`.
 
 ## 📌 Assumptions & Simplifications
-- **Vite vs Next.js**: Vite was chosen over Next.js to provide a purely client-side rendered experience which simplifies the state management (e.g. keeping track of the user's progress mid-lesson) and perfectly mimics a mobile app SPA.
+- **Client-Side SPA Architecture**: A purely client-side rendered experience (React SPA) was chosen to simplify complex mid-lesson state management. This approach perfectly mimics the instantaneous, app-like transitions of the original Duolingo mobile application.
 - **One Language**: The seeded content focuses exclusively on a single mocked language (Spanish-esque) to demonstrate the mechanics.
 - **Audio**: A custom browser Web Speech API implementation is used for text-to-speech to provide dynamic audio without requiring expensive backend AI processing.
 - **Static Assets**: SVG strings and CSS gradients are heavily relied upon to perfectly recreate Duolingo's aesthetic without needing large asset downloads.
