@@ -39,7 +39,13 @@ export default function AuthModal({ mode, onClose, onSuccess }: AuthModalProps) 
         body: JSON.stringify(body)
       })
       
-      const data = await res.json()
+      let data;
+      const text = await res.text();
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Server returned an invalid response (Status: ${res.status}). Body: ${text.substring(0, 50)}`);
+      }
       
       if (!res.ok) {
         throw new Error(data.error || data.detail || 'Authentication failed')
