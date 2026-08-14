@@ -186,6 +186,7 @@ function SkillNode({ skill, index, onSkillClick, unitColor, isChest, isTrophy }:
 
 
   // Remove the early return for isChest so it renders as a clickable button
+  return (
     <div data-state={state} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', position: 'relative' }}>
       
       {/* START Tooltip for current node */}
