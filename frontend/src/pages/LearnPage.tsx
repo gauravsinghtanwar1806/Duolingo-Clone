@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Unit, Skill, GameState } from '../types'
 import ProgressRing from '../components/ui/ProgressRing'
 import RightSidebar from '../components/layout/RightSidebar'
@@ -12,6 +12,19 @@ interface LearnPageProps {
 
 export default function LearnPage({ units, gameState, onSkillClick, onNavigate }: LearnPageProps) {
   const [selectedGuidebookUnit, setSelectedGuidebookUnit] = useState<Unit | null>(null)
+
+  // Auto-scroll to the current lesson on load
+  useEffect(() => {
+    // Small delay to ensure DOM is fully rendered
+    const timeout = setTimeout(() => {
+      const currentNodes = document.querySelectorAll('[data-state="current"]')
+      if (currentNodes.length > 0) {
+        // Scroll to the lowest current node
+        currentNodes[currentNodes.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }, 100)
+    return () => clearTimeout(timeout)
+  }, [units])
 
   return (
     <div style={{ display: 'flex', gap: '24px', maxWidth: '1056px', margin: '0 auto', padding: '24px 16px 100px' }}>
@@ -183,7 +196,7 @@ function SkillNode({ skill, index, onSkillClick, unitColor, isChest, isTrophy }:
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', position: 'relative' }}>
+    <div data-state={state} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', position: 'relative' }}>
       
       {/* START Tooltip for current node */}
       {isCurrent && (
