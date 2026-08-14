@@ -185,17 +185,7 @@ function SkillNode({ skill, index, onSkillClick, unitColor, isChest, isTrophy }:
   const outerRingColor = unitColor + '40' // 25% opacity
 
 
-  if (isChest) {
-    return (
-      <div className="relative w-[72px] h-[72px] flex items-center justify-center">
-        <div className="text-[52px] leading-none drop-shadow-md">
-          🧰
-        </div>
-      </div>
-    )
-  }
-
-  return (
+  // Remove the early return for isChest so it renders as a clickable button
     <div data-state={state} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', position: 'relative' }}>
       
       {/* START Tooltip for current node */}
@@ -246,14 +236,21 @@ function SkillNode({ skill, index, onSkillClick, unitColor, isChest, isTrophy }:
           transition: 'transform 0.15s ease',
         }}
       >
-        {/* Inner circle */}
-        <div
-          className={`absolute inset-0 rounded-full flex items-center justify-center border-[3px] border-white/20 ${isLocked ? `${lockedBgClass} ${lockedShadowClass} border-transparent` : ''}`}
-          style={{
-            background: !isLocked ? bgColor : undefined,
-            boxShadow: !isLocked ? `0 8px 0 rgba(0,0,0,0.2)` : undefined,
-          }}
-        >
+        {/* Inner circle or Chest */}
+        {isChest ? (
+          <div className={`relative w-full h-full flex items-center justify-center`}>
+            <div className={`text-[52px] leading-none drop-shadow-md ${isLocked ? 'opacity-50 grayscale' : ''}`}>
+              🧰
+            </div>
+          </div>
+        ) : (
+          <div
+            className={`absolute inset-0 rounded-full flex items-center justify-center border-[3px] border-white/20 ${isLocked ? `${lockedBgClass} ${lockedShadowClass} border-transparent` : ''}`}
+            style={{
+              background: !isLocked ? bgColor : undefined,
+              boxShadow: !isLocked ? `0 8px 0 rgba(0,0,0,0.2)` : undefined,
+            }}
+          >
           {isCompleted ? (
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
@@ -296,6 +293,7 @@ function SkillNode({ skill, index, onSkillClick, unitColor, isChest, isTrophy }:
             })()
           )}
         </div>
+        )}
       </button>
     </div>
   )
